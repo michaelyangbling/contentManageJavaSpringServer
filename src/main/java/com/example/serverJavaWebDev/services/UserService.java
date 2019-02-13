@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 import com.example.serverJavaWebDev.models.User;
 
 @RestController
@@ -28,7 +29,7 @@ public class UserService {
                     return new User();//prevent null
         }
         session.setAttribute("currentUser", user);
-        users.add(user);
+        users.add(user);//concurency?
         return user;
     }
     //https://stackoverflow.com/questions/1577236/how-to-check-whether-a-user-is-logged-in-or-not-in-servlets
@@ -44,9 +45,23 @@ public class UserService {
     }
 
     @GetMapping("/api/profile")
-    public User profile(HttpSession session) {
-        User currentUser = (User)session.getAttribute("currentUser");
-        return currentUser;
+    public User updateUser(HttpSession session) {
+        if (session.getAttribute("currentUser") == null) {
+            return new User(); // Not logged in, redirect to login page.
+        } else {
+            return (User)session.getAttribute("currentUser");
+        }
+    }
+    @PutMapping("/api/updateProfile")
+    public User profile(HttpSession session,@RequestBody User user) {
+        if (session.getAttribute("currentUser") == null) {
+            return new User(); // Not logged in, redirect to login page.
+        } else {
+            User oldUser=(User)session.getAttribute("currentUser");
+            oldUser.setFirstname(user.getFirstname());
+            oldUser.setLastname(user.getLastname());
+            return oldUser;
+        }
     }
 
     @PostMapping("/api/logout")

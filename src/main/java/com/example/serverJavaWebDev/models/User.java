@@ -8,8 +8,8 @@ public class User {
     private int id = autoIncrement++;
     private String username;
     private String password;
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
 //    private List<Course> courses = new ArrayList<Course>();
 //mvn spring-boot:run
     public User() {}
@@ -20,10 +20,10 @@ public class User {
         this.username = username;
         this.password = password;
     }
-    public User(String firstName, String lastName, String username, String password) {
+    public User(String firstname, String lastname, String username, String password) {
         this(username, password);
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
     }
 //
 //    public List<Course> getCourses() {
@@ -49,19 +49,20 @@ public class User {
     public String getPassword() {
         return password;
     }
+    //user getters to return to repsonse
     public void setPassword(String password) {
         this.password = password;
     }
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }
