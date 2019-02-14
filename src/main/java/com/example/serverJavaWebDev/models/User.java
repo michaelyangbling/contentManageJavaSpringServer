@@ -2,6 +2,7 @@ package com.example.serverJavaWebDev.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.serverJavaWebDev.models.Course;
 
 public class User {
     public static int autoIncrement = 0;
@@ -10,6 +11,7 @@ public class User {
     private String password;
     private String firstname;
     private String lastname;
+    private List<Course> courses = new ArrayList<Course>();
 //    private List<Course> courses = new ArrayList<Course>();
 //mvn spring-boot:run
     public User() {}
@@ -64,5 +66,12 @@ public class User {
     }
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 }
