@@ -2,21 +2,22 @@ package com.example.serverJavaWebDev.models;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.example.serverJavaWebDev.models.Topic;
+import com.example.serverJavaWebDev.models.Widget;
 
-public class Lesson {
+
+public class Topic {
     public static int autoIncrement = 0;
     private int id = autoIncrement++;
     private String title;
-    private List<Topic> topics = new ArrayList<Topic>();
-    public List<Topic> getTopics() {
-        return topics;
+    private List<Widget> widgets = new ArrayList<Widget>();
+    public List<Widget> getWidgets() {
+        return widgets;
     }
-    public void setTopics(List<Lesson> lessons) {
-        this.topics = topics;
+    public void setWidgets(List<Lesson> lessons) {
+        this.widgets = widgets;
     }
-    public Lesson() {}
-    public Lesson(String title) {
+    public Topic() {}
+    public Topic(String title) {
         this.title = title;
     }
     public int getId() {
