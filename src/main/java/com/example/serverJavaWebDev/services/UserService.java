@@ -5,31 +5,45 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import com.example.serverJavaWebDev.models.User;
+import com.example.serverJavaWebDev.repos.UserRepository;
 
 @RestController
 @CrossOrigin(origins="*",allowCredentials="True")
 public class UserService {
-
+    @Autowired
+    UserRepository userRepository;
     static List<User> users = new ArrayList<User>();
 
+    //@GetMapping("/api/user/{uname}")
+    private User getUserByName(String uname){
+        List<User> users= userRepository.findUserByUsername(uname);
+        if(users.size() != 0 ){
+            return users.get(0);
+        }
+        return null;
+    }
 
     @PostMapping("/api/register")
     public User register(
             @RequestBody User user,
             HttpSession session) {
-        for(User oldUser: users){
-            if(oldUser.getUsername().equals(user.getUsername()))
+            if( this.getUserByName( user.getUsername() )!= null) { // such username exists
                     return new User();//prevent null
         }
+        
+        //concurency?
+        user=userRepository.save(user);//id is here
+        System.out.println(user.getFirstname());
         session.setAttribute("currentUser", user);
-        users.add(user);//concurency?
         return user;
     }
     //https://stackoverflow.com/questions/1577236/how-to-check-whether-a-user-is-logged-in-or-not-in-servlets
@@ -49,17 +63,22 @@ public class UserService {
         if (session.getAttribute("currentUser") == null) {
             return new User(); // Not logged in, redirect to login page.
         } else {
-            return (User)session.getAttribute("currentUser");
+            User user = (User)session.getAttribute("currentUser");
+            return userRepository.findById( user .getId() ).get();
         }
     }
+
     @PutMapping("/api/updateProfile")
     public User profile(HttpSession session,@RequestBody User user) {
         if (session.getAttribute("currentUser") == null) {
             return new User(); // Not logged in, redirect to login page.
         } else {
             User oldUser=(User)session.getAttribute("currentUser");
+            oldUser = userRepository.findById( oldUser .getId() ).get();//to prevent change of database during session
+
             oldUser.setFirstname(user.getFirstname());
             oldUser.setLastname(user.getLastname());
+            userRepository.save(oldUser);
             return oldUser;
         }
     }
@@ -73,13 +92,11 @@ public class UserService {
     public User login(
             @RequestBody User credentials,
             HttpSession session) {
-        for (User user : users) {
-            if( user.getUsername().equals(credentials.getUsername())
-                    && user.getPassword().equals(credentials.getPassword())) {
-                session.setAttribute("currentUser", user);
-                return user;
-            }
+        List<User> users = userRepository.findUserByCredentials(credentials.getUsername(), credentials.getPassword());
+        if( users.size() ==0 ){
+        return new User();//prevent null, not found match
         }
-        return new User();//prevent null
+        session.setAttribute("currentUser", users.get(0));
+        return users.get(0);
     }
 }

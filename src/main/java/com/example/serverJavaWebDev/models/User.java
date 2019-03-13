@@ -3,16 +3,24 @@ package com.example.serverJavaWebDev.models;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.serverJavaWebDev.models.Course;
+import javax.persistence.*;
 
+@Entity
+@Table(name="users")
 public class User {
     public static int autoIncrement = 0;
-    private int id = autoIncrement++;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int id;
+//    private int id = autoIncrement++;
     private String username;
     private String password;
     private String firstname;
     private String lastname;
-    private List<Course> courses = new ArrayList<Course>();
-//    private List<Course> courses = new ArrayList<Course>();
+
+    // private List<Course> courses = new ArrayList<Course>();
+    @OneToMany(mappedBy="user")
+   private List<Course> courses;
 //mvn spring-boot:run
     public User() {}
 //    public User(String username) {
@@ -74,4 +82,11 @@ public class User {
     public void setCourses(List<Course> courses) {
         this.courses = courses;
     }
+
+    public void hasCourse(Course course)
+    { this.courses.add(course); 
+        if(course.getUser() != this) {
+            course.setUser(this); }//not need
+}
+
 }

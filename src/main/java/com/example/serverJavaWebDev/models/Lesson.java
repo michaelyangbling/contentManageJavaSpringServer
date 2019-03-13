@@ -12,7 +12,7 @@ public class Lesson {
     public List<Topic> getTopics() {
         return topics;
     }
-    public void setTopics(List<Lesson> lessons) {
+    public void setTopics(List<Topic> topics) {
         this.topics = topics;
     }
     public Lesson() {}

@@ -3,12 +3,22 @@ package com.example.serverJavaWebDev.models;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.serverJavaWebDev.models.Module;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+
+@Entity 
+@Table(name="courses")
 public class Course {
     public static int autoIncrement = 0;
-    private int id = autoIncrement++;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int id;
     private String title;
-    private List<Module> modules = new ArrayList<Module>();
+    @ManyToOne()
+    @JsonIgnore
+    private User user;
+    // private List<Module> modules = new ArrayList<Module>();
     public Course(String title) {
         this.title = title;
     }
@@ -28,11 +38,22 @@ public class Course {
     public void setTitle(String title) {
         this.title = title;
     }
-    public List<Module> getModules() {
-        return modules;
+    // public List<Module> getModules() {
+    //     return modules;
+    // }
+    // public void setModules(List<Module> modules) {
+    //     this.modules = modules;
+    // }
+
+    public void setUser(User user) {
+        this.user = user;
+        if(!user.getCourses().contains(this)) {
+        user.getCourses().add(this); }//only to set and send to database ? other not needed?
     }
-    public void setModules(List<Module> modules) {
-        this.modules = modules;
+
+    public User getUser() {
+        return this.user;
     }
+
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.serverJavaWebDev.models.Course;
 import com.example.serverJavaWebDev.models.User;
+import com.example.serverJavaWebDev.repos.CourseRepository;
+import com.example.serverJavaWebDev.repos.UserRepository;
 
 @RestController
 @CrossOrigin(origins="*",allowCredentials="True")
@@ -23,7 +26,10 @@ public class CourseService {
 
     //@Autowired
     UserService userService;
-
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    CourseRepository courseRepository;
     //List<Course> courses = null;
     @GetMapping("/api/user/courses")
     public List<Course> findAllCourses(HttpSession session) {
@@ -31,6 +37,7 @@ public class CourseService {
         if (user == null) {
             return null; // Not logged in, redirect to login page.
         } else {
+            user = userRepository.findById( user.getId() ).get();
             return user.getCourses();
         }
     }
@@ -43,28 +50,32 @@ public class CourseService {
             return null; // Not logged in, redirect to login page.
         } else {
             User user=(User)session.getAttribute("currentUser");
-            user.getCourses().add(course);
+            user = userRepository.findById( user.getId() ).get();//retrieve users' newest info
+            
+            //create course
+            course = courseRepository.save(course);
+            System.out.println(course.getUser());
+            
+            // course.setUser(user);
+            // courseRepository.save(course);
+
+            user.hasCourse(course);
+            user = userRepository.save(user);
             return user.getCourses();
         }
     }
 
+
     @DeleteMapping("/api/user/course/{numId}")
     public List<Course> deleteCourse(
             HttpSession session,
-            @PathVariable("numId") int id) {
+            @PathVariable("numId") int cid) {
         if (session.getAttribute("currentUser") == null) {
             return null; // Not logged in, redirect to login page.
         } else {
-            int i=0;
             User user=(User)session.getAttribute("currentUser");
-            List<Course> courses=user.getCourses();
-            while(i<courses.size()){
-                if (courses.get(i).getId()==id){
-                    courses.remove(i); //if user not exist, return some other info to let client refresh page
-                    return courses;}
-                i=i+1;
-            }
-            return null;
+            courseRepository.deleteUserCourse(user.getId(), cid);
+            return this.findAllCourses(session);
         }
     }
 
@@ -72,38 +83,32 @@ public class CourseService {
     public Integer updateCourse(
             HttpSession session,
             @RequestBody Course course,
-            @PathVariable("numId") int id) {
+            @PathVariable("numId") int cid) {
         if (session.getAttribute("currentUser") == null) {
             return null; // Not logged in, redirect to login page.
         } else {
             int i=0;
             User user=(User)session.getAttribute("currentUser");
-            List<Course> courses=user.getCourses();
-            while(i<courses.size()){
-                if (courses.get(i).getId()==id){
-                    courses.get(i).setTitle(course.getTitle()); //if user not exist, return some other info to let client refresh page
-                    return 1;}
-                i=i+1;
-            }
-            return null;
+            courseRepository.updateUserCourse(user.getId(), cid, course.getTitle());
+            return 1;//change success
         }
     }
 
-    public Course findCourseById(int id, HttpSession session) {
-        if (session.getAttribute("currentUser") == null) {
-            return null; // Not logged in, redirect to login page.
-        } else {
-            int i=0;
-            User user=(User)session.getAttribute("currentUser");
-            List<Course> courses=user.getCourses();
-            while(i<courses.size()){
-                if (courses.get(i).getId()==id){
-                    return courses.get(i);}
-                i=i+1;
-            }
-            return null;
-        }
-    }
+    // public Course findCourseById(int cid, HttpSession session) {
+    //     if (session.getAttribute("currentUser") == null) {
+    //         return null; // Not logged in, redirect to login page.
+    //     } else {
+    //         int i=0;
+    //         User user=(User)session.getAttribute("currentUser");
+    //         List<Course> courses=user.getCourses();
+    //         while(i<courses.size()){
+    //             if (courses.get(i).getId()==cid){
+    //                 return courses.get(i);}
+    //             i=i+1;
+    //         }
+    //         return null;
+    //     }
+    // }
 
 //    public Course findCourseById(int courseId) {
 //        List<User> users = userService.findAllUsers();

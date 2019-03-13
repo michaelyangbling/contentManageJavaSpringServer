@@ -13,7 +13,7 @@ public class Topic {
     public List<Widget> getWidgets() {
         return widgets;
     }
-    public void setWidgets(List<Lesson> lessons) {
+    public void setWidgets(List<Widget> widgets) {
         this.widgets = widgets;
     }
     public Topic() {}
