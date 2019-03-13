@@ -48,7 +48,7 @@ public class Course {
     public void setUser(User user) {
         this.user = user;
         if(!user.getCourses().contains(this)) {
-        user.getCourses().add(this); }//only to set and send to database ? other not needed?
+        user.getCourses().add(this); }//only to set and send to database ? other also needed?
     }
 
     public User getUser() {

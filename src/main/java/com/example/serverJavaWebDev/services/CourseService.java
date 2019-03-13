@@ -38,6 +38,8 @@ public class CourseService {
             return null; // Not logged in, redirect to login page.
         } else {
             user = userRepository.findById( user.getId() ).get();
+            System.out.println(user.getCourses());
+            System.out.println(user.getCourses().getClass().getSimpleName());
             return user.getCourses();
         }
     }
@@ -74,8 +76,12 @@ public class CourseService {
             return null; // Not logged in, redirect to login page.
         } else {
             User user=(User)session.getAttribute("currentUser");
-            courseRepository.deleteUserCourse(user.getId(), cid);
+            if( courseRepository.selectUserCourse(user.getId(), cid).size() >0 ){  //course belongs to user
+            courseRepository.deleteById(cid);
             return this.findAllCourses(session);
+            }
+            return null;
+            
         }
     }
 
@@ -84,13 +90,20 @@ public class CourseService {
             HttpSession session,
             @RequestBody Course course,
             @PathVariable("numId") int cid) {
+                String title=course.getTitle();
         if (session.getAttribute("currentUser") == null) {
             return null; // Not logged in, redirect to login page.
         } else {
             int i=0;
             User user=(User)session.getAttribute("currentUser");
-            courseRepository.updateUserCourse(user.getId(), cid, course.getTitle());
-            return 1;//change success
+            if( courseRepository.selectUserCourse(user.getId(), cid).size() >0 ){  //course belongs to user
+                course = courseRepository.findById(cid).get();
+                course.setTitle( title );
+                courseRepository.save( course );
+                return 1;
+                }
+            // courseRepository.updateUserCourse(user.getId(), cid, course.getTitle());
+            return null;//change success
         }
     }
 
