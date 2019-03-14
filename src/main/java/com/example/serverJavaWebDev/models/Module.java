@@ -17,13 +17,16 @@ public class Module {
     @ManyToOne()
     @JsonIgnore
     private Course course;
-    // private List<Lesson> lessons = new ArrayList<Lesson>();
-    // public List<Lesson> getLessons() {
-    //     return lessons;
-    // }
-    // public void setLessons(List<Lesson> lessons) {
-    //     this.lessons = lessons;
-    // }
+
+    @OneToMany(mappedBy="module")
+    private List<Lesson> lessons = new ArrayList<Lesson>();
+
+    public List<Lesson> getLessons() {
+        return lessons;
+    }
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
+    }
     public Module() {}
     public Module(String title) {
         this.title = title;
@@ -53,5 +56,11 @@ public class Module {
 
     public Course getCourse() {
         return this.course;
+    }
+
+    public void hasLesson(Lesson lesson) //set and avoid infinite loop
+    { this.lessons.add(lesson); 
+        if(lesson.getModule() != this) {
+            lesson.setModule(this); }//not need
     }
 }

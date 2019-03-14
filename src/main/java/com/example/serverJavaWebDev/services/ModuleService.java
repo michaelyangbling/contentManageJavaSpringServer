@@ -41,7 +41,7 @@ public class ModuleService {
     //     else
     //         return course.getModules();
     //         }
-    @GetMapping("/api/module/{mid}")
+    // @GetMapping("/api/module/{mid}")
     public Module findModuleById(
         @PathVariable("mid") int id, HttpSession session) {
             List<Course> courses=courseService.findAllCourses(session);
@@ -63,8 +63,8 @@ public class ModuleService {
                 if(module==null)
                     return null; //in case of session expired or other not find mod err
                 module.setTitle(req.getTitle());
-                module = moduleRepository.save(module);
-                return module;//just frame is enough
+                module = moduleRepository.save(module);//influenced by delete?
+                return new Module(module.getTitle(), module.getId() );//just frame is enough
             }
 
     @DeleteMapping("/api/module/{mid}")
@@ -77,8 +77,11 @@ public class ModuleService {
             for(Course course: courses){
                 for(Module module: course.getModules()){
                     if (module.getId()==id){
+                        System.out.println("idx");
                         moduleRepository.deleteById(id);
-                        return module;//just frame is enough
+                        System.out.println("idy");
+                        return new Module(module.getTitle(), module.getId() );//just frame is enough
+                        //module can not be directly serialized? beacuse derived from jpa?
                     }
                 }
             }
@@ -86,7 +89,7 @@ public class ModuleService {
         }
 
     @PostMapping("/api/course/{courseId}/module")
-    public Module addModuleForCourse(
+    public Module addModuleForCourse(//influenced by delete?
         @PathVariable("courseId") int courseId, HttpSession Session, @RequestBody Module module) {
     Course course = courseService.findCourseById(courseId, Session);
     if (course == null)//not found

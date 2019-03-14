@@ -33,7 +33,7 @@ public class CourseService {
     @Autowired
     CourseRepository courseRepository;
 
-    //List<Course> courses = null;
+    //List<Course> courses = null; get map for test purpose 
     @GetMapping("/api/user/courses")
     public List<Course> findAllCourses(HttpSession session) {
         User user=(User)session.getAttribute("currentUser");
@@ -59,12 +59,12 @@ public class CourseService {
             
             //create course
             course = courseRepository.save(course);
-            System.out.println(course.getUser());
+            //System.out.println(course.getUser());
             
 
             //what if go drom course side? same!!
             // course.setUser(user);
-            // courseRepository.save(course);
+            // courseRepository.save(course);?couse=?
             // System.out.println( course.getUser().getCourses() );
             // return course.getUser().getCourses();
 
@@ -131,6 +131,8 @@ public class CourseService {
             return null;//not found
         }
     }
+
+    
 
 //    public Course findCourseById(int courseId) {
 //        List<User> users = userService.findAllUsers();

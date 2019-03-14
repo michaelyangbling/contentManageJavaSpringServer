@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity 
 @Table(name="courses")
 public class Course {
-    public static int autoIncrement = 0;
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
