@@ -24,12 +24,15 @@ import com.example.serverJavaWebDev.repos.UserRepository;
 @CrossOrigin(origins="*",allowCredentials="True")
 public class CourseService {
 
-    //@Autowired
+    @Autowired
     UserService userService;
+
     @Autowired
     UserRepository userRepository;
+
     @Autowired
     CourseRepository courseRepository;
+
     //List<Course> courses = null;
     @GetMapping("/api/user/courses")
     public List<Course> findAllCourses(HttpSession session) {
@@ -38,8 +41,8 @@ public class CourseService {
             return null; // Not logged in, redirect to login page.
         } else {
             user = userRepository.findById( user.getId() ).get();
-            System.out.println(user.getCourses());
-            System.out.println(user.getCourses().getClass().getSimpleName());
+            // System.out.println(user.getCourses());
+            // System.out.println(user.getCourses().getClass().getSimpleName());
             return user.getCourses();
         }
     }
@@ -58,8 +61,12 @@ public class CourseService {
             course = courseRepository.save(course);
             System.out.println(course.getUser());
             
+
+            //what if go drom course side? same!!
             // course.setUser(user);
             // courseRepository.save(course);
+            // System.out.println( course.getUser().getCourses() );
+            // return course.getUser().getCourses();
 
             user.hasCourse(course);
             user = userRepository.save(user);
@@ -107,21 +114,23 @@ public class CourseService {
         }
     }
 
-    // public Course findCourseById(int cid, HttpSession session) {
-    //     if (session.getAttribute("currentUser") == null) {
-    //         return null; // Not logged in, redirect to login page.
-    //     } else {
-    //         int i=0;
-    //         User user=(User)session.getAttribute("currentUser");
-    //         List<Course> courses=user.getCourses();
-    //         while(i<courses.size()){
-    //             if (courses.get(i).getId()==cid){
-    //                 return courses.get(i);}
-    //             i=i+1;
-    //         }
-    //         return null;
-    //     }
-    // }
+    // @GetMapping("/api/user/course/{numId}")
+    public Course findCourseById(int cid, HttpSession session) {
+        if (session.getAttribute("currentUser") == null) {
+            return null; // Not logged in, redirect to login page.
+        } else {
+            int i=0;
+            User user=(User)session.getAttribute("currentUser");
+            System.out.println( user );
+            System.out.println( user.getId() );
+            System.out.println( courseRepository );
+            System.out.println( courseRepository.selectUserCourse(user.getId(), cid) );
+            if( courseRepository.selectUserCourse(user.getId(), cid).size() >0 ){  //course(even after deletion) belongs to user
+                return courseRepository.findById(cid).get(); 
+                }
+            return null;//not found
+        }
+    }
 
 //    public Course findCourseById(int courseId) {
 //        List<User> users = userService.findAllUsers();

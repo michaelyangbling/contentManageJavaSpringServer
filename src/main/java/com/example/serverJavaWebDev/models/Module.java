@@ -3,21 +3,34 @@ package com.example.serverJavaWebDev.models;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.serverJavaWebDev.models.Lesson;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
+
+@Entity 
+@Table(name="modules")
 public class Module {
-    public static int autoIncrement = 0;
-    private int id = autoIncrement++;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int id;
     private String title;
-    private List<Lesson> lessons = new ArrayList<Lesson>();
-    public List<Lesson> getLessons() {
-        return lessons;
-    }
-    public void setLessons(List<Lesson> lessons) {
-        this.lessons = lessons;
-    }
+    @ManyToOne()
+    @JsonIgnore
+    private Course course;
+    // private List<Lesson> lessons = new ArrayList<Lesson>();
+    // public List<Lesson> getLessons() {
+    //     return lessons;
+    // }
+    // public void setLessons(List<Lesson> lessons) {
+    //     this.lessons = lessons;
+    // }
     public Module() {}
     public Module(String title) {
         this.title = title;
+    }
+    public Module(String title, int id) {
+        this.title = title;
+        this.id = id;
     }
     public int getId() {
         return id;
@@ -30,5 +43,15 @@ public class Module {
     }
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+        if(!course.getModules().contains(this)) {
+        course.getModules().add(this); }//only to set and send to database ? other also needed?
+    }
+
+    public Course getCourse() {
+        return this.course;
     }
 }
