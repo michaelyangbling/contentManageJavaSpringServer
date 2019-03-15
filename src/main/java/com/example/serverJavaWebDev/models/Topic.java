@@ -14,13 +14,15 @@ public class Topic {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
     private String title;
-    // private List<Widget> widgets = new ArrayList<Widget>();
-    // public List<Widget> getWidgets() {
-    //     return widgets;
-    // }
-    // public void setWidgets(List<Widget> widgets) {
-    //     this.widgets = widgets;
-    // }
+
+    @OneToMany(mappedBy="topic")
+    private List<Widget> widgets = new ArrayList<Widget>();
+    public List<Widget> getWidgets() {
+        return widgets;
+    }
+    public void setWidgets(List<Widget> widgets) {
+        this.widgets = widgets;
+    }
     @ManyToOne()
     @JsonIgnore
     private Lesson lesson;
@@ -52,5 +54,10 @@ public class Topic {
 
     public Lesson getLesson(){
         return this.lesson;
+    }
+    public void hasWidget(Widget widget) //set and avoid infinite loop
+    { this.widgets.add(widget); 
+        if(widget.getTopic() != this) {
+            widget.setTopic(this); }//not need
     }
 }
