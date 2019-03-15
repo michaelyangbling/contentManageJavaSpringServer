@@ -20,7 +20,7 @@ public class User {
 
     // private List<Course> courses = new ArrayList<Course>();
     @OneToMany(mappedBy="user")
-   private List<Course> courses = new ArrayList();
+   private List<Course> courses = new ArrayList<Course>();
 //mvn spring-boot:run
     public User() {}
 //    public User(String username) {

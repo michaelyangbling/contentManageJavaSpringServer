@@ -97,7 +97,7 @@ public class Widget {
         return this.title;
     }
 
-    void  setTitle(String url){
+    void  setTitle(String title){
         this.title = title;
     }
 
