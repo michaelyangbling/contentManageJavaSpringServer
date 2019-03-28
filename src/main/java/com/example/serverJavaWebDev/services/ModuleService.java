@@ -104,6 +104,11 @@ public class ModuleService {
     return new Module(module.getTitle(), module.getId() );//this module just need to render ID, such a frame
 
 }
+//    @GetMapping("/client/course/{courseId}/module")
+//    public List<Module> findModulesForCourse(@PathVariable("courseId") int cid){
+//     Course course = courseService.findCourseById(cid);
+
+//    }
 
 
 

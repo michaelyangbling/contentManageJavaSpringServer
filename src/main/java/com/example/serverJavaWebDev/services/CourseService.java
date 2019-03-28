@@ -2,6 +2,8 @@ package com.example.serverJavaWebDev.services;
 
 import java.util.List;
 import javax.servlet.http.HttpSession;
+
+import java.beans.Transient;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ public class CourseService {
     @Autowired
     CourseRepository courseRepository;
 
+   
+    
     //List<Course> courses = null; get map for test purpose 
     @GetMapping("/api/user/courses")
     public List<Course> findAllCourses(HttpSession session) {
@@ -45,6 +49,22 @@ public class CourseService {
             // System.out.println(user.getCourses().getClass().getSimpleName());
             return user.getCourses();
         }
+    }
+
+    @GetMapping("/client/courses") //client side api
+    public List<Course> findCourses() {
+        List<Course> courses = new ArrayList<Course>();
+        for(User user: userRepository.findAll()){
+            for( Course course: user.getCourses()){
+              course.setUsername(
+                  user.getFirstname()+','+
+                  user.getLastname()+','+user.getUsername());
+              courses.add( course );
+            }
+        }
+        return courses;
+
+
     }
 
     @PostMapping("/api/user/course")
@@ -121,15 +141,19 @@ public class CourseService {
         } else {
             int i=0;
             User user=(User)session.getAttribute("currentUser");
-            System.out.println( user );
-            System.out.println( user.getId() );
-            System.out.println( courseRepository );
-            System.out.println( courseRepository.selectUserCourse(user.getId(), cid) );
+            // System.out.println( user );
+            // System.out.println( user.getId() );
+            // System.out.println( courseRepository );
+            // System.out.println( courseRepository.selectUserCourse(user.getId(), cid) );
             if( courseRepository.selectUserCourse(user.getId(), cid).size() >0 ){  //course(even after deletion) belongs to user
                 return courseRepository.findById(cid).get(); 
                 }
             return null;//not found
         }
+    }
+    @GetMapping("/client/course/{courseId}")
+    public Course findCourseById(@PathVariable("courseId") int cid) { //from courseRepository table
+        return courseRepository.findById(cid).get();
     }
 
     

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.serverJavaWebDev.models.Module;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
 
@@ -21,6 +23,17 @@ public class Course {
     private List<Module> modules = new ArrayList<Module>();
     public Course(String title) {
         this.title = title;
+    }
+    @Transient
+    @JsonSerialize
+    private String username;
+
+    public void setUsername(String username){
+        this.username = username;
+    }
+
+    public String getUsername(String username){
+        return this.username;
     }
     // public Course(int i, String title) {
     //     this.id = i; this.title = title;
